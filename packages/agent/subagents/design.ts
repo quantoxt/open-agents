@@ -1,6 +1,7 @@
 import type { LanguageModel } from "ai";
-import { gateway, stepCountIs, ToolLoopAgent } from "ai";
+import { stepCountIs, ToolLoopAgent } from "ai";
 import { z } from "zod";
+import { gateway, getCustomAIModelId, isCustomAIConfigured } from "../models";
 import { bashTool } from "../tools/bash";
 import { globTool } from "../tools/glob";
 import { grepTool } from "../tools/grep";
@@ -89,7 +90,11 @@ const callOptionsSchema = z.object({
 export type DesignCallOptions = z.infer<typeof callOptionsSchema>;
 
 export const designSubagent = new ToolLoopAgent({
-  model: gateway("anthropic/claude-opus-4.6"),
+  model: gateway(
+    isCustomAIConfigured()
+      ? (getCustomAIModelId() as any)
+      : "anthropic/claude-opus-4.6",
+  ),
   instructions: DESIGN_SYSTEM_PROMPT,
   tools: {
     read: readFileTool(),

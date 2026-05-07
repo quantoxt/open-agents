@@ -1,6 +1,10 @@
 import "server-only";
 
 import { gateway } from "ai";
+import {
+  getCustomAIModelId,
+  isCustomAIConfigured,
+} from "@open-agents/agent";
 import { z } from "zod";
 import { filterDisabledModels } from "./model-availability";
 import type {
@@ -215,9 +219,23 @@ async function fetchGatewayModels(): Promise<GatewayModel[]> {
   }
 }
 
+function getCustomAIModels(): GatewayModel[] {
+  return [
+    {
+      id: getCustomAIModelId(),
+      name: `GLM ${getCustomAIModelId()}`,
+      modelType: "language",
+    },
+  ];
+}
+
 export async function fetchAvailableLanguageModels(): Promise<
   AvailableModel[]
 > {
+  if (isCustomAIConfigured()) {
+    return getCustomAIModels();
+  }
+
   const models = await fetchGatewayModels();
   return filterDisabledModels(
     models.filter((model) => model.modelType === "language"),
@@ -227,6 +245,10 @@ export async function fetchAvailableLanguageModels(): Promise<
 export async function fetchAvailableLanguageModelsWithContext(): Promise<
   AvailableModel[]
 > {
+  if (isCustomAIConfigured()) {
+    return fetchAvailableLanguageModels();
+  }
+
   const [models, modelsDevMetadataMap] = await Promise.all([
     fetchAvailableLanguageModels(),
     fetchModelsDevMetadataMap(),

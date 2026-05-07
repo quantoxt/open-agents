@@ -6,8 +6,29 @@ import {
   type JSONValue,
   type LanguageModel,
 } from "ai";
+import { createAnthropic } from "@ai-sdk/anthropic";
 import type { AnthropicLanguageModelOptions } from "@ai-sdk/anthropic";
 import type { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
+
+const CUSTOM_AI_API_KEY = process.env.CUSTOM_AI_API_KEY;
+const CUSTOM_AI_BASE_URL = process.env.CUSTOM_AI_BASE_URL;
+const CUSTOM_AI_MODEL = process.env.CUSTOM_AI_MODEL;
+
+export function isCustomAIConfigured(): boolean {
+  return !!(CUSTOM_AI_API_KEY && CUSTOM_AI_BASE_URL);
+}
+
+export function getCustomAIModelId(): string {
+  return CUSTOM_AI_MODEL ?? "glm-5.1";
+}
+
+function createCustomAIModel(modelId: string): LanguageModel {
+  const provider = createAnthropic({
+    baseURL: CUSTOM_AI_BASE_URL,
+    apiKey: CUSTOM_AI_API_KEY,
+  });
+  return provider.languageModel(modelId);
+}
 
 function supportsAdaptiveAnthropicThinking(modelId: string): boolean {
   return modelId.includes("4.6") || modelId.includes("4.7");
@@ -174,6 +195,10 @@ export function gateway(
   options: GatewayOptions = {},
 ): LanguageModel {
   const { config, providerOptionsOverrides, appName, appUrl } = options;
+
+  if (isCustomAIConfigured()) {
+    return createCustomAIModel(getCustomAIModelId());
+  }
 
   const attributionHeaders = {
     "http-referer": appUrl ?? "https://open-agents.dev",
