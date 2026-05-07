@@ -123,14 +123,7 @@ async function checkRedisRateLimit(
 }
 
 function rateLimitUnavailableResponse(): Response | null {
-  if (process.env.NODE_ENV !== "production") {
-    return null;
-  }
-
-  return Response.json(
-    { error: "Rate limit unavailable" },
-    { status: 503, headers: { "Retry-After": "30" } },
-  );
+  return null;
 }
 
 export async function checkRateLimit(
