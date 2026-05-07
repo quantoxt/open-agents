@@ -5,7 +5,11 @@
       "dependsOn": ["^build"],
       "env": [
         "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
         "BLOB_READ_WRITE_TOKEN",
+        "CUSTOM_AI_API_KEY",
+        "CUSTOM_AI_BASE_URL",
+        "CUSTOM_AI_MODEL",
         "ENCRYPTION_KEY",
         "GITHUB_CLIENT_SECRET",
         "JWE_SECRET",

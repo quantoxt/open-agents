@@ -1,7 +1,7 @@
 -- rename existing accounts table to github_accounts
 ALTER TABLE "accounts" RENAME TO "github_accounts";
 --> statement-breakpoint
-DROP INDEX "accounts_user_id_provider_idx";
+DROP INDEX IF EXISTS "accounts_user_id_provider_idx";
 --> statement-breakpoint
 CREATE UNIQUE INDEX "github_accounts_user_id_provider_idx" ON "github_accounts" USING btree ("user_id","provider");
 --> statement-breakpoint
