@@ -6,7 +6,7 @@ import {
   type JSONValue,
   type LanguageModel,
 } from "ai";
-import { createOpenAI } from "@ai-sdk/openai";
+import { createAnthropic } from "@ai-sdk/anthropic";
 import type { AnthropicLanguageModelOptions } from "@ai-sdk/anthropic";
 import type { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 
@@ -23,11 +23,11 @@ export function getCustomAIModelId(): string {
 }
 
 function createCustomAIModel(modelId: string): LanguageModel {
-  const provider = createOpenAI({
+  const provider = createAnthropic({
     baseURL: CUSTOM_AI_BASE_URL,
     apiKey: CUSTOM_AI_API_KEY,
   });
-  return provider.chat(modelId);
+  return provider.languageModel(modelId);
 }
 
 function supportsAdaptiveAnthropicThinking(modelId: string): boolean {
