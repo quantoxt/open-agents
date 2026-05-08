@@ -27,7 +27,7 @@ function createCustomAIModel(modelId: string): LanguageModel {
     baseURL: CUSTOM_AI_BASE_URL,
     apiKey: CUSTOM_AI_API_KEY,
   });
-  return provider.chatModel(modelId);
+  return provider.chat(modelId);
 }
 
 function supportsAdaptiveAnthropicThinking(modelId: string): boolean {
