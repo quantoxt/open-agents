@@ -533,6 +533,31 @@ ${hostLine}${portLines}${runtimeEnvLine}`;
     };
 
     let sdk: VercelSandboxSDK;
+    const createConfigs = {
+      restoreSnapshot: restoreSnapshotId
+        ? { ...createBaseConfig, source: { type: "snapshot" as const, snapshotId: restoreSnapshotId } }
+        : null,
+      baseSnapshot: baseSnapshotId
+        ? { ...createBaseConfig, source: { type: "snapshot" as const, snapshotId: baseSnapshotId } }
+        : null,
+      gitSource: source
+        ? { ...createBaseConfig, source: { type: "git" as const, url: source.url, ...(source.branch && { revision: source.branch }) } }
+        : null,
+      empty: createBaseConfig,
+    };
+    console.log("[VercelSandbox] Create config:", JSON.stringify({
+      name,
+      baseSnapshotId,
+      restoreSnapshotId,
+      hasSource: !!source,
+      sourceUrl: source?.url,
+      timeout: sdkTimeout,
+      persistent,
+      vcpus,
+      ports,
+    }));
+
+    try {
     if (restoreSnapshotId) {
       sdk = await VercelSandboxSDK.create({
         ...createBaseConfig,
@@ -554,6 +579,16 @@ ${hostLine}${portLines}${runtimeEnvLine}`;
       });
     } else {
       sdk = await VercelSandboxSDK.create(createBaseConfig);
+    }
+    } catch (error: unknown) {
+      console.error("[VercelSandbox] Create failed:", error);
+      if (error && typeof error === "object" && "json" in error) {
+        console.error("[VercelSandbox] API response:", JSON.stringify((error as { json: unknown }).json));
+      }
+      if (error && typeof error === "object" && "text" in error) {
+        console.error("[VercelSandbox] API response text:", (error as { text: string }).text);
+      }
+      throw error;
     }
 
     const workingDirectory = DEFAULT_WORKING_DIRECTORY;
