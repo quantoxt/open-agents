@@ -6,7 +6,7 @@ import {
   type JSONValue,
   type LanguageModel,
 } from "ai";
-import { createAnthropic } from "@ai-sdk/anthropic";
+import { createOpenAI } from "@ai-sdk/openai";
 import type { AnthropicLanguageModelOptions } from "@ai-sdk/anthropic";
 import type { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 
@@ -23,7 +23,7 @@ export function getCustomAIModelId(): string {
 }
 
 function createCustomAIModel(modelId: string): LanguageModel {
-  const provider = createAnthropic({
+  const provider = createOpenAI({
     baseURL: CUSTOM_AI_BASE_URL,
     apiKey: CUSTOM_AI_API_KEY,
   });
