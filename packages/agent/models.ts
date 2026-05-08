@@ -26,6 +26,7 @@ function createCustomAIModel(modelId: string): LanguageModel {
   const provider = createOpenAI({
     baseURL: CUSTOM_AI_BASE_URL,
     apiKey: CUSTOM_AI_API_KEY,
+    compatibility: "compatible",
   });
   return provider.languageModel(modelId);
 }
